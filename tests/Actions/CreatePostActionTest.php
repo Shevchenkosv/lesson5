@@ -17,6 +17,7 @@ use GeekBrains\LevelTwo\Blog\Repositories\PostsRepository\PostsRepositoryInterfa
 use GeekBrains\LevelTwo\Blog\UUID;
 use GeekBrains\LevelTwo\Blog\Exceptions\PostNotFoundException;
 use PHPUnit\Framework\TestCase;
+use GeekBrains\Blog\UnitTests\DummyLogger;
 
 class CreatePostActionTest extends TestCase
 {
@@ -104,7 +105,7 @@ class CreatePostActionTest extends TestCase
             ),
         ]);
 
-        $action = new CreatePost($usersRepository, $postsRepository);
+        $action = new CreatePost($usersRepository, $postsRepository, new DummyLogger());
 
         $response = $action->handle($request);
 
@@ -141,7 +142,7 @@ class CreatePostActionTest extends TestCase
         $postsRepository = $this->postsRepository();
         $usersRepository = $this->usersRepository([]);
 
-        $action = new CreatePost($usersRepository, $postsRepository);
+        $action = new CreatePost($postsRepository, new DummyLogger(), $usersRepository);
 
         $response = $action->handle($request);
 
@@ -168,7 +169,7 @@ class CreatePostActionTest extends TestCase
             ),
         ]);
 
-        $action = new CreatePost($usersRepository, $postsRepository);
+        $action = new CreatePost($usersRepository, $postsRepository, new DummyLogger());
 
         $response = $action->handle($request);
 

@@ -2,6 +2,7 @@
 
 namespace GeekBrains\LevelTwo\Commands;
 
+use GeekBrains\Blog\UnitTests\DummyLogger;
 use GeekBrains\LevelTwo\Blog\Commands\Arguments;
 use GeekBrains\LevelTwo\Blog\Commands\CreateUserCommand;
 use GeekBrains\LevelTwo\Blog\Exceptions\ArgumentsException;
@@ -17,7 +18,7 @@ class CreateUserCommandTest extends TestCase
 {
     public function testItThrowsAnExceptionWhenUserAlreadyExists(): void
     {
-        $command = new CreateUserCommand(new DummyUsersRepository());
+        $command = new CreateUserCommand(new DummyUsersRepository(), new DummyLogger());
         // Описываем тип ожидаемого исключения
         $this->expectException(CommandException::class);
 
@@ -54,7 +55,7 @@ class CreateUserCommandTest extends TestCase
         };
 // Передаём объект анонимного класса
 // в качестве реализации UsersRepositoryInterface
-        $command = new CreateUserCommand($usersRepository);
+        $command = new CreateUserCommand($usersRepository, new DummyLogger());
 // Ожидаем, что будет брошено исключение
         $this->expectException(ArgumentsException::class);
         $this->expectExceptionMessage('No such argument: first_name');
@@ -67,7 +68,7 @@ class CreateUserCommandTest extends TestCase
     public function testItRequiresLastName(): void
     {
 // Передаём в конструктор команды объект, возвращаемый нашей функцией
-        $command = new CreateUserCommand($this->makeUsersRepository());
+        $command = new CreateUserCommand($this->makeUsersRepository(), new DummyLogger());
         $this->expectException(ArgumentsException::class);
         $this->expectExceptionMessage('No such argument: last_name');
         $command->handle(new Arguments([
@@ -135,7 +136,7 @@ class CreateUserCommandTest extends TestCase
             }
         };
 
-        $command = new CreateUserCommand($usersRepository);
+        $command = new CreateUserCommand($usersRepository, new DummyLogger());
 
         // Запускаем команду
         $command->handle(new Arguments([

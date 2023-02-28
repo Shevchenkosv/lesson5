@@ -10,7 +10,6 @@ use GeekBrains\LevelTwo\Blog\Repositories\UsersRepository\SqliteUsersRepository;
 use GeekBrains\LevelTwo\Blog\UUID;
 
 
-
 class SqlitePostsRepository implements PostsRepositoryInterface
 {
     private \PDO $connection;
@@ -70,8 +69,6 @@ class SqlitePostsRepository implements PostsRepositoryInterface
         $userRepository = new SqliteUsersRepository($this->connection);
         $user = $userRepository->get(new UUID($result['author_uuid']));
 
-
-
         return new Post(
             new UUID($result['uuid']),
             $user,
@@ -84,7 +81,7 @@ class SqlitePostsRepository implements PostsRepositoryInterface
     public function delete(UUID $uuid): void
     {
         $statement = $this->connection->prepare(
-            'DELETE FROM comments WHERE comments.uuid=:uuid;'
+            'DELETE FROM posts WHERE posts.uuid=:uuid;'
         );
 
         $statement->execute([
