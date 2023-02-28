@@ -16,6 +16,20 @@ use PHPUnit\Framework\TestCase;
 
 class CreateUserCommandTest extends TestCase
 {
+
+    public function testItRequiresPassword(): void
+    {
+        $command = new CreateUserCommand(
+            $this->makeUsersRepository(),
+            new DummyLogger()
+        );
+        $this->expectException(ArgumentsException::class);
+        $this->expectExceptionMessage('No such argument: password');
+        $command->handle(new Arguments([
+            'username' => 'Ivan',
+        ]));
+    }
+
     public function testItThrowsAnExceptionWhenUserAlreadyExists(): void
     {
         $command = new CreateUserCommand(new DummyUsersRepository(), new DummyLogger());
@@ -26,7 +40,10 @@ class CreateUserCommandTest extends TestCase
         $this->expectExceptionMessage('User already exists: Ivan');
 
         // Запускаем команду с аргументами
-        $command->handle(new Arguments(['username' => 'Ivan']));
+        $command->handle(new Arguments([
+            'username' => 'Ivan',
+            'password' => '123',
+            ]));
     }
 
     // Тест проверяет, что команда действительно требует имя пользователя

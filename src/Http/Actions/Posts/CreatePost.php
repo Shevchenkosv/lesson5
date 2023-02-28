@@ -11,8 +11,10 @@ use GeekBrains\LevelTwo\Blog\Repositories\UsersRepository\UsersRepositoryInterfa
 use GeekBrains\LevelTwo\Blog\UUID;
 use GeekBrains\LevelTwo\Blog\Exceptions\HttpException;
 use GeekBrains\LevelTwo\http\Actions\ActionInterface;
+use GeekBrains\LevelTwo\Http\Auth\AuthenticationInterface;
 use GeekBrains\LevelTwo\Http\Auth\IdentificationInterface;
 use GeekBrains\LevelTwo\Http\Auth\JsonBodyUsernameIdentification;
+use GeekBrains\LevelTwo\Http\Auth\TokenAuthenticationInterface;
 use GeekBrains\LevelTwo\http\ErrorResponse;
 use GeekBrains\LevelTwo\http\Request;
 use GeekBrains\LevelTwo\http\Response;
@@ -25,7 +27,7 @@ class CreatePost implements ActionInterface
         private PostsRepositoryInterface $postsRepository,
 // Внедряем контракт логгера
         private LoggerInterface $logger,
-        private IdentificationInterface $identification,
+        private TokenAuthenticationInterface $authentication,
 
 
     )
@@ -33,12 +35,16 @@ class CreatePost implements ActionInterface
     }
 
     /**
-     * @throws AuthException
      * @throws InvalidArgumentException
      */
     public function handle(Request $request): Response
     {
-        $user = $this->identification->user($request);
+
+        try {
+            $user = $this->authentication->user($request);
+        } catch (AuthException $e) {
+            return new ErrorResponse($e->getMessage());
+        }
 
 
         $newPostUuid = UUID::random();
