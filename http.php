@@ -5,6 +5,7 @@ use GeekBrains\LevelTwo\Blog\Exceptions\AppException;
 use GeekBrains\LevelTwo\Blog\Repositories\PostsRepository\SqlitePostsRepository;
 use GeekBrains\LevelTwo\Blog\Repositories\UsersRepository\SqliteUsersRepository;
 use GeekBrains\LevelTwo\Http\Actions\Auth\LogIn;
+use GeekBrains\LevelTwo\Http\Actions\Auth\LogOut;
 use GeekBrains\LevelTwo\Http\Actions\Posts\CreatePost;
 use GeekBrains\LevelTwo\Http\Actions\Users\CreateUser;
 use GeekBrains\LevelTwo\Http\Actions\Users\FindByUsername;
@@ -48,6 +49,7 @@ $routes = [
     ],
     'POST' => [
         '/login' => LogIn::class,
+        '/logout' => LogOut::class,
         '/users/create' => CreateUser::class,
         '/posts/create' => CreatePost::class,
         '/post-likes/create' => CreatePostLike::class,

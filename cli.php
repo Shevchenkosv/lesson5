@@ -1,22 +1,42 @@
 <?php
 
-use GeekBrains\LevelTwo\Blog\Commands\Arguments;
-use GeekBrains\LevelTwo\Blog\Commands\CreateUserCommand;
-use GeekBrains\LevelTwo\Blog\Like;
-use GeekBrains\LevelTwo\Blog\UUID;
-use GeekBrains\LevelTwo\Blog\Repositories\LikesRepository\SqliteLikesRepository;
-use GeekBrains\LevelTwo\Blog\Repositories\LikesRepository\LikesRepositoryInterface;
+
+use GeekBrains\LevelTwo\Blog\Commands\FakeData\PopulateDB;
+use GeekBrains\LevelTwo\Blog\Commands\Posts\DeletePost;
+use GeekBrains\LevelTwo\Blog\Commands\Users\CreateUser;
+use GeekBrains\LevelTwo\Blog\Commands\Users\UpdateUser;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Application;
 
 $container = require __DIR__ . '/bootstrap.php';
 
 $logger = $container->get(LoggerInterface::class);
 
+
+// Создаём объект приложения
+$application = new Application();
+
+// Перечисляем классы команд
+$commandsClasses = [
+    CreateUser::class,
+    DeletePost::class,
+    UpdateUser::class,
+    PopulateDB::class,
+
+
+];
+
+foreach ($commandsClasses as $commandClass) {
+// Посредством контейнера
+// создаём объект команды
+    $command = $container->get($commandClass);
+// Добавляем команду к приложению
+    $application->add($command);
+}
+
 try {
 
-    // При помощи контейнера создаём команду
-    $command = $container->get(CreateUserCommand::class);
-    $command->handle(Arguments::fromArgv($argv));
+    $application->run();
 
 } catch (Exception $e) {
     $logger->error($e->getMessage(), ['exception' => $e]);

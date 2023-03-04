@@ -21,6 +21,11 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Dotenv\Dotenv;
+use Faker\Generator;
+use Faker\Provider\Lorem;
+use Faker\Provider\ru_RU\Internet;
+use Faker\Provider\ru_RU\Person;
+use Faker\Provider\ru_RU\Text;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -52,6 +57,21 @@ if ('yes' === $_ENV['LOG_TO_CONSOLE']) {
         new StreamHandler("php://stdout")
     );
 }
+
+// Создаём объект генератора тестовых данных
+$faker = new Generator();
+// Инициализируем необходимые нам виды данных
+$faker->addProvider(new Person($faker));
+$faker->addProvider(new Text($faker));
+$faker->addProvider(new Internet($faker));
+$faker->addProvider(new Lorem($faker));
+
+// Добавляем генератор тестовых данных
+// в контейнер внедрения зависимостей
+$container->bind(
+    Generator::class,
+    $faker
+);
 
 $container->bind(
     TokenAuthenticationInterface::class,
